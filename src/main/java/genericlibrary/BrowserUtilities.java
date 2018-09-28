@@ -1,6 +1,9 @@
 package genericlibrary;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.By;
@@ -9,20 +12,29 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import io.github.bonigarcia.wdm.WebDriverManager;
 
-public final class BrowserUtilities {
+public class BrowserUtilities {
 
 	static final String BROWSER = "browser";
 	Wait<WebDriver> wait;
+	public static Properties prop;
 
-	private BrowserUtilities() {
-		throw new IllegalStateException("Utility class");
+	public BrowserUtilities() {
+		try {
+			prop = new Properties();
+			FileInputStream ip = new FileInputStream("./constant.properties");
+			prop.load(ip);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -34,45 +46,36 @@ public final class BrowserUtilities {
 
 	public static WebDriver getBrowser() throws IOException, InterruptedException {
 
-		if (ConfigProperties.getObject(BROWSER).equalsIgnoreCase("firefox")) {
-
-			System.setProperty("webdriver.firefox.marionette", ConfigProperties.getObject("pathGeckoDriver"));
+		if (prop.getProperty(BROWSER).equalsIgnoreCase("firefox")) {
+			WebDriverManager.firefoxdriver().setup();
 			driver = new FirefoxDriver();
 			driver.manage().window().maximize();
-			driver.get(ConfigProperties.getObject("url"));
+			driver.get(prop.getProperty("url"));
 
 		}
 
-		else if (ConfigProperties.getObject(BROWSER).equalsIgnoreCase("chrome")) {
-
-			System.setProperty("webdriver.chrome.driver", ConfigProperties.getObject("pathChromeDriver"));
+		else if (prop.getProperty(BROWSER).equalsIgnoreCase("chrome")) {
+			WebDriverManager.chromedriver().setup();
 			driver = new ChromeDriver();
-	
 			driver.manage().window().maximize();
-			driver.get(ConfigProperties.getObject("url"));
-			Thread.sleep(200);
+			driver.get(prop.getProperty("url"));
 
-		} else if (ConfigProperties.getObject(BROWSER).equalsIgnoreCase("ie")) {
+		} else if (prop.getProperty(BROWSER).equalsIgnoreCase("ie")) {
 
-			System.setProperty("webdriver.ie.driver", ConfigProperties.getObject("pathIEDriver"));
-			driver = new InternetExplorerDriver();
+			WebDriverManager.iedriver().setup();
+			driver = new ChromeDriver();
 			driver.manage().window().maximize();
-			driver.get(ConfigProperties.getObject("url"));
+			driver.get(prop.getProperty("url"));
 		}
-
 		return driver;
-
 	}
 
 	public static void closeBrowser() {
-
 		driver.close();
-
 	}
 
 	public WebElement getWhenVisible(By locator, int timeout) {
 		WebElement element = null;
-
 		element = wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
 		return element;
 	}
@@ -86,7 +89,6 @@ public final class BrowserUtilities {
 	public void fluentWait(final By locator) {
 		wait = new FluentWait<WebDriver>(driver).withTimeout(30, TimeUnit.SECONDS).pollingEvery(5, TimeUnit.SECONDS)
 				.ignoring(NoSuchElementException.class);
-
 		WebElement element = (WebElement) locator;
 		element.click();
 

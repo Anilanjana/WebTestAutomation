@@ -1,5 +1,10 @@
 package testscript;
 
+import java.awt.Robot;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
+import java.awt.event.KeyEvent;
 import java.io.IOException;
 
 import org.apache.log4j.Logger;
@@ -16,13 +21,19 @@ import org.testng.annotations.Test;
 import genericlibrary.BrowserUtilities;
 import genericlibrary.LogUtilities;
 import genericlibrary.ScreenshotUtilities;
+import pageobjects.HomePage;
 import pageobjects.LoginPage;
 
-public class FirstTest {
+public class FirstTest extends BrowserUtilities{
 
 	LoginPage lpobj;
+	HomePage hpobj;
 	Logger log;
-
+	
+	public FirstTest() {
+		super();
+	}
+	
 	@BeforeTest
 	public void launch() throws IOException, InterruptedException {
 		DOMConfigurator.configure("log4j.xml");
@@ -33,17 +44,20 @@ public class FirstTest {
 	@BeforeMethod
 	public void initializePage() {
 		lpobj = new LoginPage(BrowserUtilities.driver);
+		hpobj=new HomePage(BrowserUtilities.driver);
 	}
 
 	@Test
 	public void firstTest() throws IOException {
-		try {
-             
+		try { 
+			
 			lpobj.loginUser();
-			 Assert.assertEquals("verify", "verify");
-
+			String actualmsg=lpobj.Invalid_email_address_msg.getText();
+			System.out.println(actualmsg);
+			Assert.assertEquals(actualmsg, "Invalid email address");
+			
 		} catch (Exception e) {
-			e.printStackTrace();
+			System.out.println("Test failed");
 		}
 	}
 
@@ -56,7 +70,8 @@ public class FirstTest {
 
 	@AfterTest
 	public void crash() {
-		BrowserUtilities.closeBrowser();
+		//BrowserUtilities.closeBrowser();
 		LogUtilities.info("Browser closed Successfully");
 	}
+	
 }

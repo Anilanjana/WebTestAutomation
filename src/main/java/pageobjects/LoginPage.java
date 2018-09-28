@@ -14,21 +14,27 @@ public class LoginPage {
 	public LoginPage(WebDriver driver) {
 		PageFactory.initElements(driver, this);
 	}
+	
+	@FindBy(xpath = "//a[@title='Log in to your customer account']")
+	public WebElement signin_button;
 
-	@FindBy(id = "txtUsername")
-	public WebElement username;
+	@FindBy(id = "email")
+	public WebElement emailaddress;
 
-	@FindBy(id = "txtPassword")
+	@FindBy(id = "passwd")
 	public WebElement password;
 
-	@FindBy(id = "btnLogin")
+	@FindBy(id = "SubmitLogin")
 	public WebElement loginbutton;
+	
+	@FindBy(xpath = "//li[contains(text(),'Invalid email address.')]")
+	public WebElement Invalid_email_address_msg;
+	
 
 	public void loginUser() throws IOException {
-	    String uid=ExcelUtilities.readExcel(1, 1);
-	    String pwd=ExcelUtilities.readExcel(2, 1);
-		username.sendKeys(uid);
-		password.sendKeys(pwd);
+		signin_button.click();
+		emailaddress.sendKeys("indrapal");
+		password.sendKeys("passwd");
 		loginbutton.click();
 	}
 }

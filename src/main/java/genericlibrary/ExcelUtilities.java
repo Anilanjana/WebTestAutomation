@@ -45,7 +45,9 @@ public class ExcelUtilities {
 	public static String readExcel(int rowNum, int colNum) throws IOException {
 		try {
 
-			ExcelUtilities.setExcel(ConfigProperties.getObject("pathTestData"));
+			
+			
+			ExcelUtilities.setExcel(BrowserUtilities.prop.getProperty("pathTestData"));
 
 			row = excelSheet.getRow(rowNum);
 			cell = row.getCell(colNum);
@@ -60,7 +62,7 @@ public class ExcelUtilities {
 	public static String writeExcel(String result, int rowNum, int colNum) throws IOException {
 		try {
 
-			ExcelUtilities.setExcel(ConfigProperties.getObject("pathTestData"));
+			ExcelUtilities.setExcel(BrowserUtilities.prop.getProperty("pathTestData"));
 
 			row = excelSheet.createRow(rowNum);
 
@@ -77,7 +79,7 @@ public class ExcelUtilities {
 				cell.setCellValue(result);
 
 			}
-			FileOutputStream fileOut = new FileOutputStream(ConfigProperties.getObject("pathTestData"));
+			FileOutputStream fileOut = new FileOutputStream(BrowserUtilities.prop.getProperty("pathTestData"));
 
 			excelWorkbook.write(fileOut);
 

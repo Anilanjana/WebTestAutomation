@@ -26,8 +26,9 @@ public class ScreenshotUtilities {
 
 		// now copy the screenshot to desired location using copyFile method
 
+		
 		FileUtils.copyFile(src,
-				new File(ConfigProperties.getObject("Screenshotpath") + System.currentTimeMillis() + ".png"));
+				new File(BrowserUtilities.prop.getProperty("Screenshotpath") + System.currentTimeMillis() + ".png"));
 
 	}
 }
